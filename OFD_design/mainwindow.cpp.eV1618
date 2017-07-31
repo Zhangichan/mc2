@@ -1,0 +1,319 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include<QToolButton>
+#include<QComboBox>
+#include<QColorDialog>
+#include<QLineEdit>
+#include <QtWidgets>
+#include <QMessageBox>
+#include <QTextStream>
+
+
+//#include<QFontDialog>
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+    ui->textEdit->setGeometry(120,20,1024,1096);
+
+    //创建工具栏
+    createToolBars();
+    //连接信号与槽函数
+    connectFunction();
+    FileWrite();
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+void MainWindow::FileWrite()
+{
+    //将文本框数据取出并按行排列
+    QFile file("a.txt");//文件命名
+    if (!file.open(QFile::WriteOnly | QFile::Text))     //检测文件是否打开
+       {
+           QMessageBox::information(this, "Error Message", "Please Select a Text File!");
+           return;
+       }
+    QTextStream out(&file);                 //分行写入文件
+    out << ui->textEdit->toPlainText();
+}
+void MainWindow::createToolBars()
+{
+    //添加工具栏设置字体
+    QComboBox *combobox1 = new QComboBox(this);
+    combobox1->addItem(QWidget::tr("华文黑体"));
+    combobox1->addItem(QWidget::tr("宋体"));
+    combobox1->addItem(QWidget::tr("仿宋"));
+    ui->toolBar_2->addWidget(combobox1);
+
+    //添加工具栏设置字体大小
+    QComboBox *combobox2 = new QComboBox(this);
+    combobox2->addItem(QWidget::tr("五号"));
+    combobox2->addItem(QWidget::tr("一号"));
+    combobox2->addItem(QWidget::tr("二号"));
+    combobox2->addItem(QWidget::tr("三号"));
+    combobox2->addItem(QWidget::tr("四号"));
+    ui->toolBar_2->addWidget(combobox2);
+    //添加工具栏字体加粗、斜体、下划线、删除线、上划线、居左、居中、居右、两端对齐
+    ui->toolBar_2->addAction(ui->action_bold);
+    ui->toolBar_2->addAction(ui->action_italics);
+    ui->toolBar_2->addAction(ui->action_underline);
+    ui->toolBar_2->addAction(ui->action_strickout);
+    ui->toolBar_2->addAction(ui->action_online);
+    ui->toolBar_2->addSeparator();
+    ui->toolBar_2->addAction(ui->action_superscript);
+    ui->toolBar_2->addAction(ui->action_subscript);
+    ui->toolBar_2->addSeparator();
+    ui->toolBar_2->addAction(ui->action_justifyLeft);
+    ui->toolBar_2->addAction(ui->action_justifyCenter);
+    ui->toolBar_2->addAction(ui->action_justifyRight);
+    ui->toolBar_2->addAction(ui->action_justifyFull);
+    ui->toolBar_2->addSeparator();
+    //添加工具栏改变行距
+    QToolButton *toolBtn3 = new QToolButton(this);
+    toolBtn3->addAction(ui->action_lineSpacing);
+    toolBtn3->setIcon(QIcon(":/images/text_line_spacing.svg"));
+    QMenu *lineSpacingMenu = new QMenu(this);
+    lineSpacingMenu->addAction(ui->action1_5_C);
+    lineSpacingMenu->addAction(ui->action2_C);
+    lineSpacingMenu->addAction(ui->action_customSpaced);
+    toolBtn3->setMenu(lineSpacingMenu);
+    toolBtn3->setPopupMode(QToolButton::MenuButtonPopup);
+    ui->toolBar_2->addWidget(toolBtn3);
+    //添加工具栏增大、减少缩进
+    ui->toolBar_2->addAction(ui->action_indentMore);
+    ui->toolBar_2->addAction(ui->action_indentLess);
+}
+
+void MainWindow::connectFunction()
+{
+    //连接复制的信号与槽
+    connect(ui->action_copy, SIGNAL(triggered()), ui->textEdit, SLOT(copy()));
+    //连接粘贴的信号与槽
+    connect(ui->action_paste, SIGNAL(triggered()),ui->textEdit, SLOT(paste()));
+    //连接剪切的信号与槽
+    connect(ui->action_cut, SIGNAL(triggered()),ui->textEdit, SLOT(cut()));
+    //连接查找的信号与槽
+    connect(ui->action_find, SIGNAL(triggered()), this, SLOT(textFind()));
+    //连接撤销的信号与槽
+    connect(ui->action_undo,SIGNAL(triggered()),this,SLOT(Undo()));
+    //连接恢复的信号与槽
+    connect(ui->action_redo,SIGNAL(triggered()),this,SLOT(Redo()));
+    //连接下划线的信号与槽
+    connect(ui->action_underline, SIGNAL(triggered()), this, SLOT(Underline()));
+    //连接斜体的信号与槽
+    connect(ui->action_italics, SIGNAL(triggered()), this, SLOT(Italic()));
+    //将设置字体颜色与颜色的信号连接
+    connect(ui->action_color,SIGNAL(triggered()),this,SLOT(setFontColor()));
+    //connect(ui->action_bold,SIGNAL(triggered()),this,SLOT(Bold()));
+    connect(ui->action_justifyLeft,SIGNAL(triggered()),this,SLOT(justfyLeft()));
+
+    connect(ui->action_fontStyle,SIGNAL(triggered()),this,SLOT(fontFamily()));
+
+    connect(ui->action_new,SIGNAL(triggered()),this,SLOT(slotNew()));
+    connect(ui->action_open,SIGNAL(triggered()),this,SLOT(slotOpen()));
+    connect(ui->action_save,SIGNAL(triggered()),this,SLOT(slotSave()));
+    connect(ui->action_saveAs,SIGNAL(triggered()),this,SLOT(slotSaveAs()));
+    connect(ui->action_close,SIGNAL(triggered()),qApp,SLOT(quit()));
+
+}
+// 查找文本
+void MainWindow::textFind()
+{
+    // 创建对话框
+    QDialog *dlg = new QDialog(this);
+    // 创建行编辑器
+    lineEdit = new QLineEdit(dlg);
+    // 创建按钮
+    QPushButton *btn = new QPushButton(dlg);
+    btn->setText(tr("查找下一个"));
+    // 关联信号与槽
+    connect(btn,SIGNAL(clicked()),this,SLOT(findNext()));
+    // 创建垂直布局管理器
+    QVBoxLayout *layout = new QVBoxLayout;
+    // 添加部件
+    layout->addWidget(lineEdit);
+    layout->addWidget(btn);
+    // 在对话框中使用布局管理器
+    dlg->setLayout(layout);
+    dlg->show();
+}
+
+// 查找下一个
+void MainWindow::findNext()
+{
+    // 使用查找函数查找指定字符串，查找方式为向后查找
+    QString string = lineEdit->text();
+    bool isfind = ui->textEdit->find(string, QTextDocument::FindBackward);
+
+    // 如果查找成功，输出字符串所在行和列的编号
+    if(isfind){
+        qDebug() << tr("行号:%1 列号:%2")
+                    .arg(ui->textEdit->textCursor().blockNumber())
+                    .arg(ui->textEdit->textCursor().columnNumber());
+    }
+}
+//撤销
+void MainWindow::Undo()
+{
+    ui->textEdit->undo();
+}
+//恢复
+void MainWindow::Redo()
+{
+    ui->textEdit->redo();
+}
+
+//设置斜体
+void MainWindow::Italic()
+{
+    if(!ui->textEdit->fontItalic()){
+        ui->textEdit->setFontItalic(true);
+    }else {
+        ui->textEdit->setFontItalic(false);
+    }
+}
+//设置下划线
+void MainWindow::Underline()
+{
+    if(!ui->textEdit->fontUnderline()){
+        ui->textEdit->setFontUnderline(true);
+    }else {
+        ui->textEdit->setFontUnderline(false);
+    }
+}
+void MainWindow::justfyLeft()
+{
+
+        ui->textEdit->setAlignment(Qt::AlignLeft);
+
+
+}
+//void MainWindow::justfyRight()
+//{
+//    if(ui->action_justifyCenter){
+//        ui->textEdit->setAlignment(Qt::AlignCenter);
+//    }
+//    if(ui->action_justifyRight){
+//        ui->textEdit->setAlignment(Qt::AlignRight);
+//    }
+//    if(ui->action_justifyFull){
+//        ui->textEdit->setAlignment(Qt::AlignJustify);
+//    }
+//}
+
+//设置字体颜色
+void MainWindow::setFontColor()
+{
+    ui->textEdit->setTextColor(QColorDialog::getColor(Qt::black,ui->textEdit));
+}
+
+void MainWindow::fontFamily()
+{
+    ui->textEdit->setFontFamily("华文黑体");
+}
+
+bool MainWindow::maybeSave()
+{
+    if(ui->textEdit->document()->isModified())
+    {
+        QMessageBox::StandardButton ret;
+        ret = QMessageBox::warning(this,
+                                   "warning",
+"the document has been modified,Do you want to save your change",                                   QMessageBox::Save|QMessageBox::Discard|QMessageBox::Cancel
+                                   );
+        if(ret == QMessageBox::Save)
+            return slotSave();
+        if(ret == QMessageBox::Cancel)
+            return false;
+    }
+    else
+        return true;
+}
+
+void MainWindow::setCurrentFile(const QString &fileName)
+{
+    currentName = fileName;
+    ui->textEdit->document()->setModified(false);
+    this->setWindowModified(false);
+    fileName.isEmpty() ?
+                this->setWindowFilePath("Untitle.ofd"):
+                this->setWindowFilePath(fileName);
+}
+
+void MainWindow::slotNew()
+{
+    if(maybeSave())
+    {
+        ui->textEdit->clear();
+        setCurrentFile("");
+    }
+}
+
+bool MainWindow::slotSave()
+{
+    if(currentName.isEmpty())
+        return slotSaveAs();
+    else
+        return saveFile(currentName);
+}
+
+bool MainWindow::saveFile(const QString &fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QFile::WriteOnly|QFile::Text))
+    {
+        QMessageBox::critical(this,
+                              "critical",
+                              "cannot write file"
+                              );
+        return false;
+    }
+    else
+    {
+        QTextStream out(&file);
+        out<<ui->textEdit->toPlainText();
+        setCurrentFile(fileName);
+        return true;
+    }
+}
+
+bool MainWindow::slotSaveAs()
+{
+    QString fileName =QFileDialog::getSaveFileName(this);
+    if(fileName.isEmpty())
+        return false;
+    else
+        return saveFile(fileName);
+}
+void MainWindow::slotOpen()
+{
+    if(maybeSave())
+    {
+        QString fileName = QFileDialog::getOpenFileName(this);
+        if(!fileName.isEmpty())
+            loadFile(fileName);
+    }
+}
+
+void MainWindow::loadFile(const QString &fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QFile::ReadOnly|QFile::Text))
+    {
+        QMessageBox::critical(this,
+                              "critical",
+                              "cannot read file"
+                              );
+        return;
+    }
+    else
+    {
+        QTextStream in(&file);
+        ui->textEdit->setPlainText(in.readAll());
+        setCurrentFile(fileName);
+    }
+}

@@ -1,0 +1,43 @@
+QMAKE_DEFAULT_INCDIRS = \
+    /usr/include/c++/5.2.0 \
+    /usr/include/c++/5.2.0/x86_64-unknown-linux-gnu \
+    /usr/include/c++/5.2.0/backward \
+    /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include \
+    /usr/local/include \
+    /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed \
+    /usr/include
+QMAKE_DEFAULT_LIBDIRS = \
+    /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0 \
+    /usr/lib \
+    /lib
+QMAKE_CXX.INCDIRS = \
+    /usr/include/c++/5.2.0 \
+    /usr/include/c++/5.2.0/x86_64-unknown-linux-gnu \
+    /usr/include/c++/5.2.0/backward \
+    /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include \
+    /usr/local/include \
+    /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed \
+    /usr/include \
+    /opt/gcc7/include/c++/7.1.1 \
+    /opt/gcc7/include/c++/7.1.1/x86_64-pc-linux-gnu \
+    /opt/gcc7/include/c++/7.1.1/backward \
+    /opt/gcc7/lib/gcc/x86_64-pc-linux-gnu/7.1.1/include \
+    /opt/gcc7/lib/gcc/x86_64-pc-linux-gnu/7.1.1/include-fixed \
+    /usr/local/include \
+    /usr/include
+QMAKE_CXX.LIBDIRS = \
+    /usr/lib/gcc/x86_64-unknown-linux-gnu/5.2.0 \
+    /usr/lib \
+    /lib \
+    /opt/gcc7/lib/gcc/x86_64-pc-linux-gnu/7.1.1 \
+    /opt/gcc7/lib/gcc \
+    /opt/gcc7/lib
+QMAKE_CXX.QT_COMPILER_STDCXX = 201402L
+QMAKE_CXX.QT_GCC_MAJOR_VERSION = 7
+QMAKE_CXX.QT_GCC_MINOR_VERSION = 1
+QMAKE_CXX.QT_GCC_PATCH_VERSION = 1
+QMAKE_CXX.COMPILER_MACROS = \
+    QT_COMPILER_STDCXX \
+    QT_GCC_MAJOR_VERSION \
+    QT_GCC_MINOR_VERSION \
+    QT_GCC_PATCH_VERSION
