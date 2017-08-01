@@ -1,0 +1,13 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<ofd:OFD xmlns:ofd="http://www.ofdspec.org" DocType="OFD" Version="1.0">
+    <ofd:DocBody>
+        <ofd:DocInfo>
+            <ofd:DocID>0fa172ba25504c79bac06877c32836ff</ofd:DocID>
+            <ofd:CreationDate>2017-08-01</ofd:CreationDate>
+            <ofd:Author/>
+            <ofd:Title/>
+            <ofd:CreatorVersion/>
+        </ofd:DocInfo>
+        <ofd:DocRoot>Doc_0/Document.xml</ofd:DocRoot>
+    </ofd:DocBody>
+</ofd:OFD>
