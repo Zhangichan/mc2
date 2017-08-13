@@ -1,0 +1,64 @@
+            //0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            QString boundary = e.attribute("Boundary");
+            QStringList qls = boundary.split(" ");
+            x = qls.at(0);
+            y = qls.at(1);
+
+            qreal mmLineWidget =text5->m_pageMetrics.mmPageSize().width()-text5->m_pageMetrics.mmPageMargins().left()-text5->m_pageMetrics.mmPageMargins().right();
+
+            qreal mmRightMargin =  text5->m_pageMetrics.mmPageMargins().right();
+
+            xmm = x.toDouble();
+
+            if(judge)
+            {
+                variableY = y;
+                judge = false;
+            }
+
+            if(y == variableY)  //只有第一次才进去此循环
+            {
+
+                cursor.insertText(mytext);
+                yBefore = y;
+                variableY = "0.00";
+            }else{
+                if(xmm< mmLineWidget+mmRightMargin-5.69)
+                {
+                    if(y == yBefore) //没有换行
+                    {
+                        cursor.insertText(mytext);
+                        yBefore = y;
+                    }else{ //回车换行
+                        cursor.insertText("\n");
+                        cursor.insertText(mytext);
+                        yBefore = y;
+                    }
+                }else { //满行的情况
+                    cursor.insertText(mytext);
+                    yBefore = y;
+                }
+            }
+
+            if(mytext.isEmpty())
+            {
+                cursor.insertText(" ");
+            }
+            //0000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            
+            
+            
+            
+                QString x;
+                qreal xmm;
+                 
+                QString y;
+                QString yBefore;
+                QString variableY;
+                
+                
+                
+                if(!(ofdframe->DelDir("./ofd/Doc_0/Pages")))
+                {
+                }
+
